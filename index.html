@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SEAM / EA Control Center - Secure</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background: #0b0b0f;
+      color: #fff;
+      font-family: 'Press Start 2P', cursive, monospace;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .login-screen {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+
+    .login-box {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2rem;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 0 20px #ff5faf;
+    }
+
+    .login-box h2 {
+      color: #ff5faf;
+      margin-bottom: 1rem;
+    }
+
+    .login-box input {
+      width: 100%;
+      margin: 0.5rem 0;
+      padding: 0.6rem;
+      font-size: 0.8rem;
+      border: 2px solid #ff5faf;
+      background: black;
+      color: white;
+      outline: none;
+    }
+
+    .login-box button {
+      margin-top: 1rem;
+      width: 100%;
+      padding: 0.6rem;
+      background: #ff5faf;
+      border: none;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .login-box button:hover {
+      background: #ff6b35;
+    }
+
+    #mainApp { display: none; } /* Hidden until login */
+  </style>
+</head>
+
+<body>
+  <!-- Login Screen -->
+  <div id="loginScreen" class="login-screen">
+    <div class="login-box">
+      <h2>🔐 Control Center Login</h2>
+      <input type="text" id="nameInput" placeholder="Enter your name" />
+      <input type="password" id="pinInput" placeholder="Enter your PIN" />
+      <button onclick="checkLogin()">Login</button>
+      <p id="loginMessage" style="color: #ff6b35; margin-top: 1rem;"></p>
+    </div>
+  </div>
+
+  <!-- Main App (hidden until login) -->
+  <div id="mainApp">
+    <nav class="container-fluid">
+      <ul>
+        <li><strong>SEAM / EA Control Center</strong></li>
+      </ul>
+      <ul>
+        <li><a href="#">Dashboard</a></li>
+        <li><a href="#">AI Copilot</a></li>
+        <li><a href="#" role="button">Settings</a></li>
+      </ul>
+    </nav>
+
+    <main class="container">
+      <div class="grid">
+        <!-- Example Panels -->
+        <section class="panel">
+          <h2 style="color:#ff6b35">EA Parts</h2>
+          <p>Computer components hub.</p>
+          <a href="https://seambros.github.io/e.a.parts-com" target="_blank">Visit Site</a>
+        </section>
+
+        <section class="panel">
+          <h2 style="color:#1affd5">EA Capital</h2>
+          <p>Funding & investments division.</p>
+          <a href="https://seambros.github.io/E.A-Capital" target="_blank">Visit Site</a>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Allowed users
+    const users = {
+      "Essam Mubbashir": "5247",
+      "Ahmed Umer": "4231"
+    };
+
+    const loginScreen = document.getElementById("loginScreen");
+    const mainApp = document.getElementById("mainApp");
+    const loginMsg = document.getElementById("loginMessage");
+
+    function checkLogin() {
+      const name = document.getElementById("nameInput").value.trim();
+      const pin = document.getElementById("pinInput").value.trim();
+
+      if (users[name] && users[name] === pin) {
+        localStorage.setItem("loggedInUser", name);
+        showApp();
+      } else {
+        loginMsg.textContent = "❌ Invalid name or PIN.";
+      }
+    }
+
+    function showApp() {
+      loginScreen.style.display = "none";
+      mainApp.style.display = "block";
+    }
+
+    // Auto-login if already saved
+    window.onload = () => {
+      if (localStorage.getItem("loggedInUser")) {
+        showApp();
+      }
+    };
+  </script>
+</body>
+</html>
