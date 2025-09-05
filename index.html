@@ -5,15 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>SEAM / EA Control Center</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+
   <style>
     body {
-      background: #0b0b0f;
+      background: linear-gradient(135deg, #0b0b0f, #1a1a2e);
       color: #fff;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       display: flex;
       flex-direction: column;
       min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Animations */
+    @keyframes glow {
+      0% { box-shadow: 0 0 10px rgba(255,255,255,0.2); }
+      50% { box-shadow: 0 0 20px rgba(255,255,255,0.6); }
+      100% { box-shadow: 0 0 10px rgba(255,255,255,0.2); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     /* Login styles */
@@ -23,6 +36,7 @@
       align-items: center;
       height: 100vh;
       flex-direction: column;
+      animation: fadeIn 1s ease;
     }
 
     .login-box {
@@ -30,11 +44,7 @@
       padding: 2rem;
       border-radius: 12px;
       text-align: center;
-      box-shadow: 0 0 20px #444;
-    }
-
-    .login-box h2 {
-      margin-bottom: 1rem;
+      animation: glow 3s infinite alternate;
     }
 
     .login-box input {
@@ -70,12 +80,19 @@
     /* Panels */
     .grid {
       gap: 2rem;
+      animation: fadeIn 1s ease;
     }
 
     .panel {
       padding: 1.5rem;
       border-radius: 12px;
       color: #fff;
+      transform: scale(1);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .panel:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(255,255,255,0.3);
     }
     .panel img {
       height: 40px;
@@ -89,26 +106,48 @@
       text-decoration: none;
       padding: 0.4rem 0.8rem;
       border-radius: 6px;
+      transition: background 0.3s;
     }
 
     /* Color themes */
     .ea-parts { background: #ff6b35; }
-    .ea-capital { background: #1affd5; }
+    .ea-parts a { background: #fff; color:#ff6b35; }
+    .ea-capital { background: #1affd5; color:black; }
+    .ea-capital a { background: black; color:#1affd5; }
     .seam-world { background: #bb86fc; }
-    .ea-company { background: #ffd23f; color: black; }
+    .seam-world a { background: white; color:#bb86fc; }
+    .ea-company { background: #ffd23f; color:black; }
+    .ea-company a { background:black; color:#ffd23f; }
     .seam-tech { background: #ff5faf; }
+    .seam-tech a { background:white; color:#ff5faf; }
 
     /* Copilot */
     .copilot {
       margin-top: 2rem;
       padding: 1.5rem;
       border-radius: 12px;
-      background: #222;
+      background: #111;
+      border: 2px solid #ff5faf;
+      animation: glow 4s infinite alternate;
     }
     .copilot textarea {
       width: 100%;
       min-height: 80px;
       margin-bottom: 1rem;
+      border-radius: 6px;
+      padding: 0.6rem;
+    }
+    .copilot button {
+      background: #ff5faf;
+      border:none;
+      color:white;
+      font-weight:bold;
+      border-radius:6px;
+      padding:0.6rem 1.2rem;
+      cursor:pointer;
+    }
+    .copilot button:hover {
+      background: #ff6b35;
     }
   </style>
 </head>
@@ -221,7 +260,7 @@
       welcomeUser.textContent = "Welcome, " + user + " 👋 | SEAM / EA Control Center";
     }
 
-    // Auto-login if already saved
+    // Auto-login
     window.onload = () => {
       const saved = localStorage.getItem("loggedInUser");
       if (saved) {
@@ -230,7 +269,8 @@
     };
 
     // Gemini Copilot
-    const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY"; // replace with your key
+    const GEMINI_API_KEY = "AIzaSyBKC6owIEeAl5wqlrRvpQaGU0a4ydOkz7I";
+
     async function askGemini() {
       const input = document.getElementById("copilotInput").value.trim();
       const output = document.getElementById("copilotOutput");
@@ -239,7 +279,7 @@
       output.textContent = "Thinking...";
 
       try {
-        const response = await fetch(
+        let response = await fetch(
           `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
           {
             method: "POST",
@@ -250,14 +290,30 @@
           }
         );
 
-        const data = await response.json();
+        let data = await response.json();
+
+        // fallback if model is not available
+        if (!data.candidates) {
+          response = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: input }] }]
+              })
+            }
+          );
+          data = await response.json();
+        }
+
         if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
           output.textContent = data.candidates[0].content.parts[0].text;
         } else {
-          output.textContent = "⚠️ No response from Gemini.";
+          output.textContent = "⚠️ Gemini error:\n" + JSON.stringify(data, null, 2);
         }
       } catch (err) {
-        output.textContent = "❌ Error contacting Gemini API.";
+        output.textContent = "❌ Error: " + err.message;
       }
     }
   </script>
