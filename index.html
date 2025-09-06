@@ -1,275 +1,273 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SEAM / EA Control Center</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
-
   <style>
     body {
-      background: linear-gradient(135deg, #0b0b0f, #1a1a2e);
-      color: #fff;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
-      display: flex;
-      flex-direction: column;
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #ff9966, #ff5e62);
+      color: white;
       min-height: 100vh;
       overflow-x: hidden;
     }
 
-    /* Animations */
-    @keyframes glow {
-      0% { box-shadow: 0 0 10px rgba(255,255,255,0.2); }
-      50% { box-shadow: 0 0 20px rgba(255,255,255,0.6); }
-      100% { box-shadow: 0 0 10px rgba(255,255,255,0.2); }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    h1, h2, h3 {
+      margin: 0.5em 0;
     }
 
-    /* Login styles */
-    .login-screen {
+    /* Login Screen */
+    #loginScreen {
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      flex-direction: column;
-      animation: fadeIn 1s ease;
+      background: #111;
     }
-
-    .login-box {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 2rem;
-      border-radius: 12px;
-      text-align: center;
-      animation: glow 3s infinite alternate;
-    }
-
-    .login-box input {
-      width: 100%;
-      margin: 0.5rem 0;
-      padding: 0.6rem;
-      font-size: 1rem;
-      border: 2px solid #777;
-      background: black;
-      color: white;
-      outline: none;
-      border-radius: 6px;
-    }
-
-    .login-box button {
-      margin-top: 1rem;
-      width: 100%;
-      padding: 0.6rem;
-      background: #ff5faf;
+    #loginScreen input, #loginScreen button {
+      margin: 10px;
+      padding: 12px;
       border: none;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
       border-radius: 6px;
-      transition: 0.3s;
+      font-size: 16px;
     }
-    .login-box button:hover {
-      background: #ff6b35;
+    #loginScreen button {
+      background: #ff5e62;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s;
     }
-
-    #mainApp { display: none; }
-
-    /* Panels */
-    .grid {
-      gap: 2rem;
-      animation: fadeIn 1s ease;
+    #loginScreen button:hover {
+      background: #ff9966;
     }
 
-    .panel {
-      padding: 1.5rem;
-      border-radius: 12px;
-      color: #fff;
-      transform: scale(1);
-      transition: transform 0.3s, box-shadow 0.3s;
+    /* Dashboard */
+    #dashboard {
+      display: none;
+      padding: 2rem;
     }
-    .panel:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 20px rgba(255,255,255,0.3);
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      background: rgba(0,0,0,0.6);
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
-    .panel img {
+
+    nav img {
       height: 40px;
+      margin-right: 10px;
+    }
+
+    nav h1 {
+      font-size: 1.5rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      backdrop-filter: blur(8px);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    }
+
+    .card img {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
       margin-bottom: 1rem;
     }
-    .panel a {
+
+    .card a {
       display: inline-block;
-      margin-top: 0.5rem;
-      color: white;
-      font-weight: bold;
-      text-decoration: none;
-      padding: 0.4rem 0.8rem;
+      margin-top: 10px;
+      padding: 10px 18px;
       border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      color: white;
       transition: background 0.3s;
     }
 
-    /* Color themes */
-    .ea-parts { background: #ff6b35; }
-    .ea-parts a { background: #fff; color:#ff6b35; }
-    .ea-capital { background: #1affd5; color:black; }
-    .ea-capital a { background: black; color:#1affd5; }
-    .seam-world { background: #bb86fc; }
-    .seam-world a { background: white; color:#bb86fc; }
-    .ea-company { background: #ffd23f; color:black; }
-    .ea-company a { background:black; color:#ffd23f; }
-    .seam-tech { background: #ff5faf; }
-    .seam-tech a { background:white; color:#ff5faf; }
+    /* Unique colors */
+    .orange a { background: #ff7b54; }
+    .orange a:hover { background: #ff9472; }
+
+    .pink a { background: #ff5e91; }
+    .pink a:hover { background: #ff85b3; }
+
+    .teal a { background: #00c9a7; }
+    .teal a:hover { background: #34e7d9; }
+
+    .purple a { background: #9b5de5; }
+    .purple a:hover { background: #b982f1; }
+
+    .yellow a { background: #ffb703; }
+    .yellow a:hover { background: #ffd166; }
 
     /* Copilot */
-    .copilot {
-      margin-top: 2rem;
-      padding: 1.5rem;
+    #copilot {
+      margin-top: 3rem;
+      padding: 2rem;
+      background: rgba(0,0,0,0.5);
       border-radius: 12px;
-      background: #111;
-      border: 2px solid #ff5faf;
-      animation: glow 4s infinite alternate;
     }
-    .copilot textarea {
+
+    #copilot textarea {
       width: 100%;
-      min-height: 80px;
-      margin-bottom: 1rem;
+      min-height: 100px;
+      padding: 12px;
       border-radius: 6px;
-      padding: 0.6rem;
+      border: none;
+      resize: vertical;
+      font-size: 14px;
     }
-    .copilot button {
-      background: #ff5faf;
-      border:none;
-      color:white;
-      font-weight:bold;
-      border-radius:6px;
-      padding:0.6rem 1.2rem;
-      cursor:pointer;
+
+    #copilot button {
+      margin-top: 1rem;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      background: #00c9a7;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
     }
-    .copilot button:hover {
-      background: #ff6b35;
+
+    #copilot button:hover {
+      background: #34e7d9;
+    }
+
+    #copilotOutput {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: rgba(255,255,255,0.1);
+      border-radius: 6px;
+      white-space: pre-wrap;
     }
   </style>
 </head>
-
 <body>
   <!-- Login -->
-  <div id="loginScreen" class="login-screen">
-    <div class="login-box">
-      <h2>🔐 Control Center Login</h2>
-      <input type="text" id="nameInput" placeholder="Enter your name" />
-      <input type="password" id="pinInput" placeholder="Enter your PIN" />
-      <button onclick="checkLogin()">Login</button>
-      <p id="loginMessage" style="margin-top: 1rem; color:#ff6b35;"></p>
+  <div id="loginScreen">
+    <h1>SEAM / EA Control Center Login</h1>
+    <input type="text" id="username" placeholder="Enter your name">
+    <input type="password" id="pin" placeholder="Enter PIN">
+    <button onclick="login()">Login</button>
+    <p id="loginError" style="color:red;"></p>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dashboard">
+    <nav>
+      <div style="display:flex; align-items:center;">
+        <img src="logos/seam.png" alt="SEAM Logo">
+        <h1>Control Center</h1>
+      </div>
+      <div id="welcomeUser"></div>
+    </nav>
+
+    <div class="grid">
+      <div class="card orange">
+        <img src="logos/ea.png" alt="EA Logo">
+        <h2>EA Parts</h2>
+        <p>Computer parts and components hub.</p>
+        <a href="https://seambros.github.io/e.a.parts-com" target="_blank">Visit Site</a>
+      </div>
+
+      <div class="card yellow">
+        <img src="logos/sm.png" alt="SM Logo">
+        <h2>EA Capital</h2>
+        <p>Funding & capital wing of the group.</p>
+        <a href="https://seambros.github.io/E.A-Capital" target="_blank">Visit Site</a>
+      </div>
+
+      <div class="card teal">
+        <img src="logos/seam.png" alt="SEAM Logo">
+        <h2>SEAM Worldwide</h2>
+        <p>Global expansion & world domination branch.</p>
+        <a href="https://seambros.github.io/S.E.A.M-Worldwide" target="_blank">Visit Site</a>
+      </div>
+
+      <div class="card pink">
+        <img src="logos/ea.png" alt="EA Logo">
+        <h2>EA Company</h2>
+        <p>Official home & hero page for EA Enterprises.</p>
+        <a href="https://seambros.github.io/EAcompany.com" target="_blank">Visit Site</a>
+      </div>
+
+      <div class="card purple">
+        <img src="logos/seam.png" alt="SEAM Logo">
+        <h2>SEAM Technology</h2>
+        <p>Official SEAM technology website.</p>
+        <a href="https://seambros.github.io/S.E.A.MTechnologyEnterprises-com" target="_blank">Visit Site</a>
+      </div>
+    </div>
+
+    <!-- Copilot -->
+    <div id="copilot">
+      <h2>AI Copilot</h2>
+      <textarea id="copilotInput" placeholder="Ask Gemini anything..."></textarea>
+      <button onclick="askGemini()">Send</button>
+      <div id="copilotOutput"></div>
     </div>
   </div>
 
-  <!-- Main App -->
-  <div id="mainApp">
-    <nav class="container-fluid">
-      <ul>
-        <li><strong id="welcomeUser">SEAM / EA Control Center</strong></li>
-      </ul>
-      <ul>
-        <li><a href="#">Dashboard</a></li>
-        <li><a href="#">AI Copilot</a></li>
-        <li><a href="#" role="button">Settings</a></li>
-      </ul>
-    </nav>
-
-    <main class="container">
-      <div class="grid">
-        <!-- EA Parts -->
-        <section class="panel ea-parts">
-          <img src="logos/ea.png" alt="EA Logo">
-          <h2>EA Parts</h2>
-          <p>Computer components hub.</p>
-          <a href="https://seambros.github.io/e.a.parts-com" target="_blank">Visit Site</a>
-        </section>
-
-        <!-- EA Capital -->
-        <section class="panel ea-capital">
-          <img src="logos/sm.png" alt="SM Logo">
-          <h2>EA Capital</h2>
-          <p>Funding & investments division.</p>
-          <a href="https://seambros.github.io/E.A-Capital" target="_blank">Visit Site</a>
-        </section>
-
-        <!-- SEAM Worldwide -->
-        <section class="panel seam-world">
-          <img src="logos/seam.png" alt="SEAM Logo">
-          <h2>SEAM Worldwide</h2>
-          <p>Global expansion / domination branch.</p>
-          <a href="https://seambros.github.io/S.E.A.M-Worldwide" target="_blank">Visit Site</a>
-        </section>
-
-        <!-- EA Company -->
-        <section class="panel ea-company">
-          <img src="logos/ea.png" alt="EA Logo">
-          <h2>EA Company</h2>
-          <p>Official EA hero page.</p>
-          <a href="https://seambros.github.io/EAcompany.com" target="_blank">Visit Site</a>
-        </section>
-
-        <!-- SEAM Tech Enterprises -->
-        <section class="panel seam-tech">
-          <img src="logos/seam.png" alt="SEAM Logo">
-          <h2>SEAM Technology Enterprises</h2>
-          <p>The core SEAM technology hub.</p>
-          <a href="https://seambros.github.io/S.E.A.MTechnologyEnterprises-com" target="_blank">Visit Site</a>
-        </section>
-      </div>
-
-      <!-- Copilot -->
-      <div class="copilot">
-        <h2>🤖 Gemini Copilot</h2>
-        <textarea id="copilotInput" placeholder="Ask Gemini anything..."></textarea>
-        <button onclick="askGemini()">Send</button>
-        <pre id="copilotOutput" style="margin-top:1rem; white-space:pre-wrap;"></pre>
-      </div>
-    </main>
-  </div>
-
   <script>
-    // Allowed users
+    const GEMINI_API_KEY = "AIzaSyBKC6owIEeAl5wqlrRvpQaGU0a4ydOkz7I";
+
     const users = {
       "Essam Mubbashir": "5247",
       "Ahmed Umer": "4231"
     };
 
-    const loginScreen = document.getElementById("loginScreen");
-    const mainApp = document.getElementById("mainApp");
-    const loginMsg = document.getElementById("loginMessage");
-    const welcomeUser = document.getElementById("welcomeUser");
-
-    function checkLogin() {
-      const name = document.getElementById("nameInput").value.trim();
-      const pin = document.getElementById("pinInput").value.trim();
+    function login() {
+      const name = document.getElementById("username").value.trim();
+      const pin = document.getElementById("pin").value.trim();
+      const error = document.getElementById("loginError");
 
       if (users[name] && users[name] === pin) {
         localStorage.setItem("loggedInUser", name);
-        showApp(name);
+        showDashboard(name);
       } else {
-        loginMsg.textContent = "❌ Invalid name or PIN.";
+        error.textContent = "❌ Invalid name or PIN.";
       }
     }
 
-    function showApp(user) {
-      loginScreen.style.display = "none";
-      mainApp.style.display = "block";
-      welcomeUser.textContent = "Welcome, " + user + " 👋 | SEAM / EA Control Center";
+    function showDashboard(name) {
+      document.getElementById("loginScreen").style.display = "none";
+      document.getElementById("dashboard").style.display = "block";
+      document.getElementById("welcomeUser").textContent = "Welcome, " + name;
     }
 
-    // Auto-login
-    window.onload = () => {
-      const saved = localStorage.getItem("loggedInUser");
-      if (saved) {
-        showApp(saved);
+    // Stay logged in
+    window.onload = function() {
+      const savedUser = localStorage.getItem("loggedInUser");
+      if (savedUser) {
+        showDashboard(savedUser);
       }
     };
-
-    // Gemini Copilot
-    const GEMINI_API_KEY = "AIzaSyBKC6owIEeAl5wqlrRvpQaGU0a4ydOkz7I";
 
     async function askGemini() {
       const input = document.getElementById("copilotInput").value.trim();
@@ -278,9 +276,9 @@
 
       output.textContent = "Thinking...";
 
-      try {
-        let response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+      async function callModel(model) {
+        const response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -289,22 +287,14 @@
             })
           }
         );
+        return response.json();
+      }
 
-        let data = await response.json();
+      try {
+        let data = await callModel("gemini-2.0-flash");
 
-        // fallback if model is not available
         if (!data.candidates) {
-          response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                contents: [{ parts: [{ text: input }] }]
-              })
-            }
-          );
-          data = await response.json();
+          data = await callModel("gemini-1.5-flash");
         }
 
         if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
