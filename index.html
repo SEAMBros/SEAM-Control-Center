@@ -26,13 +26,17 @@
       align-items: center;
       height: 100vh;
       background: #111;
+      padding: 1rem;
+      text-align: center;
     }
     #loginScreen input, #loginScreen button {
       margin: 10px;
-      padding: 12px;
+      padding: 14px;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 16px;
+      width: 90%;
+      max-width: 320px;
     }
     #loginScreen button {
       background: #ff5e62;
@@ -47,55 +51,61 @@
     /* Dashboard */
     #dashboard {
       display: none;
-      padding: 2rem;
+      padding: 1rem;
     }
 
     nav {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 1rem 2rem;
+      padding: 1rem;
       background: rgba(0,0,0,0.6);
       position: sticky;
       top: 0;
       z-index: 10;
+      flex-wrap: wrap;
     }
 
     nav img {
-      height: 40px;
+      height: 36px;
       margin-right: 10px;
     }
 
     nav h1 {
-      font-size: 1.5rem;
+      font-size: 1.2rem;
+    }
+
+    #welcomeUser {
+      font-size: 0.9rem;
+      margin-top: 5px;
     }
 
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1.5rem;
-      margin-top: 2rem;
+      gap: 1rem;
+      margin-top: 1.5rem;
     }
 
     .card {
       background: rgba(255,255,255,0.1);
       border-radius: 12px;
-      padding: 1.5rem;
+      padding: 1.2rem;
       text-align: center;
       backdrop-filter: blur(8px);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.4);
     }
 
     .card img {
-      width: 64px;
-      height: 64px;
+      width: 60px;
+      height: 60px;
       object-fit: contain;
-      margin-bottom: 1rem;
+      margin-bottom: 0.8rem;
     }
 
     .card a {
@@ -125,10 +135,20 @@
     .yellow a { background: #ffb703; }
     .yellow a:hover { background: #ffd166; }
 
+    /* Greeting */
+    #greeting {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: rgba(0,0,0,0.4);
+      border-radius: 12px;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
     /* Copilot */
     #copilot {
-      margin-top: 3rem;
-      padding: 2rem;
+      margin-top: 2rem;
+      padding: 1rem;
       background: rgba(0,0,0,0.5);
       border-radius: 12px;
     }
@@ -153,6 +173,7 @@
       font-size: 16px;
       cursor: pointer;
       transition: background 0.3s;
+      width: 100%;
     }
 
     #copilot button:hover {
@@ -165,6 +186,25 @@
       background: rgba(255,255,255,0.1);
       border-radius: 6px;
       white-space: pre-wrap;
+      font-size: 0.9rem;
+    }
+
+    /* Mobile Adjustments */
+    @media (max-width: 600px) {
+      nav {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      nav h1 {
+        font-size: 1rem;
+      }
+      .card {
+        padding: 1rem;
+      }
+      .card img {
+        width: 50px;
+        height: 50px;
+      }
     }
   </style>
 </head>
@@ -225,6 +265,9 @@
       </div>
     </div>
 
+    <!-- Greeting -->
+    <div id="greeting"></div>
+
     <!-- Copilot -->
     <div id="copilot">
       <h2>AI Copilot</h2>
@@ -238,8 +281,14 @@
     const GEMINI_API_KEY = "AIzaSyBKC6owIEeAl5wqlrRvpQaGU0a4ydOkz7I";
 
     const users = {
-      "Essam Mubbashir": "5247",
-      "Ahmed Umer": "4231"
+      "Shahrome Muhammad": "5392",
+      "Ahmad Umer": "6873",
+      "Muhaarib Sher Ali": "6485",
+      "Ehtesham Mamu": "6373",
+      "Adnan Kazmi": "6458",
+      "Essam Mubbashir": "7652",
+      "Hamza Usman": "7326",
+      "Azzam Mubbashir": "7253"
     };
 
     function login() {
@@ -259,6 +308,8 @@
       document.getElementById("loginScreen").style.display = "none";
       document.getElementById("dashboard").style.display = "block";
       document.getElementById("welcomeUser").textContent = "Welcome, " + name;
+      document.getElementById("greeting").textContent =
+        `Greetings, ${name}, this is the official website database page for the SEAM Technologies group! Feel free to explore!`;
     }
 
     // Stay logged in
@@ -283,7 +334,11 @@
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              contents: [{ parts: [{ text: input }] }]
+              contents: [{
+                parts: [{
+                  text: `You are a helpful assistant for 3 companies named SEAM Technology Enterprises, EA Enterprises, and SM Technologies. EA is a programming and computer parts powerhouse, SM is focused on animation, and SEAM is a supercompany created by both companies.\n\nUser: ${input}`
+                }]
+              }]
             })
           }
         );
